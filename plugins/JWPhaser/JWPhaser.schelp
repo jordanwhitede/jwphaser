@@ -1,0 +1,26 @@
+class:: JWPhaser
+summary:: a simple 4 stage phaser with feedback
+related:: TODO
+categories:: UGens>TODO
+
+description::
+
+a simple 4 stage phaser with feedback
+
+
+classmethods::
+
+method::ar, kr
+
+argument::TODO
+
+argument::TODO
+
+
+examples::
+
+code::
+
+{ JWPhaser.ar(/* TODO */) }.play
+
+::
