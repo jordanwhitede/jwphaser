@@ -12,9 +12,17 @@ classmethods::
 
 method::ar, kr
 
-argument::TODO
+argument::input
 
-argument::TODO
+argument::rate - the modulation frequency
+
+argument::depth - mod depth, max 1
+
+argument::mix - the mix between the signals
+
+argument::feedback - the feedback amount
+
+
 
 
 examples::

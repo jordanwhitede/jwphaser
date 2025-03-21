@@ -1,10 +1,8 @@
 JWPhaser : UGen {
-	*ar { |input, gain|
-		/* TODO */
-		^this.multiNew('audio', input, gain);
+	*ar { |input, rate, depth, mix, feedback|
+		^this.multiNew('audio', input, rate, depth, mix, feedback);
 	}
 	checkInputs {
-		/* TODO */
 		^this.checkValidInputs;
 	}
 }

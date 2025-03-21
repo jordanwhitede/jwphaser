@@ -1,0 +1,70 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-0e83023d31667c58eb6c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "JWPhaser",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "JWPhaser_scsynth::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-JWPhaser_scsynth-Debug-b23aa2311054cf02b843.json",
+					"name" : "JWPhaser_scsynth",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "JWPhaser_supernova::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-JWPhaser_supernova-Debug-6d80d8f4b0651ebf281c.json",
+					"name" : "JWPhaser_supernova",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/jordan/Documents/cpp/scplugins/jwphaser/cmake-build-debug",
+		"source" : "/home/jordan/Documents/cpp/scplugins/jwphaser"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

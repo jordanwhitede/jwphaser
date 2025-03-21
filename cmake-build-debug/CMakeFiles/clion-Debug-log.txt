@@ -1,0 +1,32 @@
+/var/lib/snapd/snap/clion/322/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/var/lib/snapd/snap/clion/322/bin/ninja/linux/x64/ninja -G Ninja -S /home/jordan/Documents/cpp/scplugins/jwphaser -B /home/jordan/Documents/cpp/scplugins/jwphaser/cmake-build-debug
+CMake Warning at cmake_modules/SuperColliderServerPlugin.cmake:10 (message):
+  No SC_PATH specified, defaulting to '../supercollider'.
+Call Stack (most recent call first):
+  CMakeLists.txt:29 (sc_check_sc_path)
+
+
+-- Found SuperCollider: /home/jordan/Documents/cpp/scplugins/supercollider
+-- Building plugins for SuperCollider version: 3.14.0-dev
+-- The C compiler identification is GNU 14.2.1
+-- The CXX compiler identification is GNU 14.2.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+CMake Warning at CMakeLists.txt:42 (message):
+  No install prefix provided, defaulting to $BUILD_DIR/install
+
+
+-- Install directory set to: /home/jordan/Documents/cpp/scplugins/jwphaser/cmake-build-debug/install
+-- Added server plugin target JWPhaser_scsynth
+-- Added server plugin target JWPhaser_supernova
+-- Generating plugin targets done
+-- Configuring done (0.5s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/jordan/Documents/cpp/scplugins/jwphaser/cmake-build-debug
