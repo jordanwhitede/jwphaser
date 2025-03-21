@@ -2,7 +2,7 @@
 
 Author: Jordan White
 
-a simple 4 stage phaser with feedback
+a simple 4 stage phaser with feedback - this is a work in progress though
 
 ### Requirements
 
