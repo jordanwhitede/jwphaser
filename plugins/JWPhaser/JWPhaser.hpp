@@ -48,7 +48,7 @@ private:
     int writePhase;
     int mask;
 
-    AllpassFilter apf[4];
+    AllpassFilter apf[8];
 };
 
 } // namespace JWPhaser

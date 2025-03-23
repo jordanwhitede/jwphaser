@@ -9,8 +9,6 @@ static InterfaceTable* ft;
 
 namespace JWPhaser {
 
-
-
 JWPhaser::JWPhaser() {
     mCalcFunc = make_calc_function<JWPhaser, &JWPhaser::next>();
     feedbackSignal = 0.0f;
@@ -98,8 +96,10 @@ void JWPhaser::next(int nSamples) {
 
         // scale lfo to [0, 1]
         float scaledLFOValue = 0.5 * (1 + lfoValue);
-        float expLFOValue = minFreq * powf(maxFreq / minFreq, scaledLFOValue); // exponential mapping
+        // exponential mapping
+        float expLFOValue = minFreq * powf(maxFreq / minFreq, scaledLFOValue);
         expLFOValue = expLFOValue * depth; // adding depth control
+        // convert freq to coeff
         float tanValue = tanf(M_PI * expLFOValue / sampleRate());
         float coeff = (tanValue - 1.0f) / (tanValue + 1.0f);
 

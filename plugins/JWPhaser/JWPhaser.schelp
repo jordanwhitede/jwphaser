@@ -22,7 +22,7 @@ argument::mix - the mix between the signals
 
 argument::feedback - the feedback amount
 
-argument::numStages - experimental, probably can't be modulated
+argument::numStages - experimental, can be modulated but the results aren't great yet
 
 
 
