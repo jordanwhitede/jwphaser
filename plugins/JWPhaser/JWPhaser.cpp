@@ -53,12 +53,10 @@ void JWPhaser::next(int nSamples) {
 
     // control rate params
     const float rate = in0(1);
-
     float depth = in0(2);
-
     const float mix = in0(3);
-
     const float feedback = in0(4);
+    float numStages = in0(5);
 
     // Output buffer
     float* output = out(0);
@@ -71,9 +69,16 @@ void JWPhaser::next(int nSamples) {
         depth = 0.99;
     }
 
-    float baseCoeff = 0.01; // i have not found a good value for this
-    float modRange = depth; // or this - originally depth was multiplied by some number to keep it under control, but that's not an issue atm
+    if (numStages > 8) {
+        numStages = 8;
+    }
 
+    if (numStages < 2) {
+        numStages = 2;
+    }
+
+    float minFreq = 200;
+    float maxFreq = 4000;
     int delayInSamples = 0.01f * sampleRate();
 
     // phaser function
@@ -88,22 +93,25 @@ void JWPhaser::next(int nSamples) {
         // lfo here to calculate coeff modulation
         float lfoValue = sinf(lfoPhase);
         lfoPhase += 2.0f * M_PI * rate / sampleRate(); // update phase
-        //if (lfoPhase > 2.0f * M_PI) lfoPhase -= 2.0f * M_PI; // wrap phase at 2pi
-        lfoPhase = fmod(lfoPhase, 2.0f * M_PI); // wrap phase at 2pi
+        //if (lfoPhase > 2.0f * M_PI) lfoPhase -= 2.0f * M_PI; // wrap phase at 2pi - this may be more efficient?
+        lfoPhase = fmod(lfoPhase, 2.0f * M_PI); // wrap phase at 2pi - think this one is safer?
 
-        // calculate modulated coeff
-        float modulatedCoeff = baseCoeff + (lfoValue * modRange);
-        modulatedCoeff = std::clamp(modulatedCoeff, 0.01f, 0.99f);
+        // scale lfo to [0, 1]
+        float scaledLFOValue = 0.5 * (1 + lfoValue);
+        float expLFOValue = minFreq * powf(maxFreq / minFreq, scaledLFOValue); // exponential mapping
+        expLFOValue = expLFOValue * depth; // adding depth control
+        float tanValue = tanf(M_PI * expLFOValue / sampleRate());
+        float coeff = (tanValue - 1.0f) / (tanValue + 1.0f);
 
         // copy signal and mix with feedback
         const float sig = input[i] + feedbackSignal;
 
-        // experimental - learning how to iterate, hopefully it works
-        //float allpassed[4];
-        float allpassed = sig;
-       // AllpassFilter apf[4];
-        for (int j = 0; j < 4; ++j) {
-        allpassed = apf[j].process(allpassed, modulatedCoeff);
+
+        // series allpasses
+        float allpassed = sig; // this seems redundant
+        for (int j = 0; j < numStages; ++j) {
+            allpassed = apf[j].process(allpassed, coeff);
+        //allpassed = apf[j].process(allpassed, modulatedCoeff);
         //allpassed[1] = apf1.process(allpassed[0], modulatedCoeff);
         //allpassed[2] = apf2.process(allpassed[1], modulatedCoeff);
         //allpassed[3] = apf3.process(allpassed[2], modulatedCoeff);

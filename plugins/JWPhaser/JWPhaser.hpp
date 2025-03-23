@@ -15,6 +15,7 @@ namespace JWPhaser {
 
             // all pass formula, check again
             float output = (coeff * input) + prevInput - (coeff * prevOutput);
+            //float output = (input + (prevInput * coeff)) * (coeff * -1) + prevInput;
 
             // update previous input & output;
             prevInput = input;
