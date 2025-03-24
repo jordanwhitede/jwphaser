@@ -13,9 +13,14 @@ namespace JWPhaser {
         Cubic() {}
             float process(float input, float gain, float fbAmp) {
                 float sig = input * gain;
-                sig = sig - (powf(sig, 3) / 3);
-                sig = sig * fbAmp;
-                return sig;
+
+                // protection against NaNs
+                if (!std::isfinite(sig)) return 0.0f;
+
+                sig = sig - (powf(sig, 3) * 0.3f);
+                sig = std::clamp(sig, -1e6f, 1e6f);
+                return sig * fbAmp;
+
 
             }
     };
@@ -24,9 +29,13 @@ namespace JWPhaser {
     public:
         Tanh() {}
         float process(float input, float gain, float fbAmp) {
+
                 float sig = input * gain;
-                sig = tanhf(sig) * fbAmp;
-                return sig;
+                // protection
+                if (!std::isfinite(sig)) return 0.0f;
+                sig = tanhf(sig);
+                sig = std::clamp(sig, -1e6f, 1e6f);
+                return sig * fbAmp;
         }
     };
 
@@ -36,8 +45,9 @@ namespace JWPhaser {
         float process(float input, float gain, float fbAmp) {
             // wavefolding function
             float sig = input * gain;
-            if (sig > 1.0) { sig = 2.0 - sig; };
-            if (sig < 1.0) { sig = -2.0 - sig; };
+            if (!std::isfinite(sig)) return 0.0f;
+            if (sig > 1.0f) { sig = 2.0f - sig; }
+            if (sig < -1.0f) { sig = -2.0f - sig; }
             return sig * fbAmp;
         }
     };
@@ -60,7 +70,7 @@ namespace JWPhaser {
             x_2 = x_1;
             y_2 = y_1;
             x_1 = input;
-            x_2 = output;
+            y_1 = output;
             //prevInput = input;
             //prevOutput = output;
 
@@ -70,10 +80,9 @@ namespace JWPhaser {
     private:
         //float prevInput;
         //float prevOutput;
-        float x_1;
-        float x_2;
-        float y_1;
-        float y_2;
+        float x_1, x_2;
+        float y_1, y_2;
+
     };
 
 class JWPhaser : public SCUnit {
@@ -88,7 +97,6 @@ private:
     void next(int nSamples);
     void clear(int nSamples);
     // Member variables
-    float lfoPhase;
     float feedbackSignal;
     float bufSize;
     float* feedbackBuffer;

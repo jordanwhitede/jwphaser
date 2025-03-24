@@ -15,7 +15,6 @@ JWPhaser::JWPhaser() {
     mCalcFunc = make_calc_function<JWPhaser, &JWPhaser::next>();
     feedbackSignal = 0.0f;
     writePhase = 0;
-    lfoPhase = 0.0f;
     bufSize = NEXTPOWEROFTWO((float) sampleRate() * 0.01f); // 10 ms delay
 
     // declare Buffer
@@ -52,14 +51,13 @@ void JWPhaser::next(int nSamples) {
     const float* input = in(0);
 
     // control rate params
-    const float rate = in0(1);
-    const float freq = in0(2);
-    const float q = in0(3);
-    const float mix = in0(4);
-    float nonlin = in0(5);
-    float gain = in0(6);
-    float feedback = in0(7);
-    float numStages = in0(8);
+    const float freq = in0(1);
+    const float q = std::max(0.01f, in0(2));
+    const float mix = in0(3);
+    float nonlin = in0(4);
+    float gain = in0(5);
+    float feedback = in0(6);
+    float numStages = in0(7);
 
     // Output buffer
     float* output = out(0);
@@ -71,6 +69,9 @@ void JWPhaser::next(int nSamples) {
     if (numStages < 2) {
         numStages = 2;
     }
+
+    // possibly unnecessary
+    feedback = std::clamp(feedback, -0.99f, 0.99f);
 
     int delayInSamples = 0.01f * sampleRate();
 
@@ -105,13 +106,15 @@ void JWPhaser::next(int nSamples) {
 
         // q = frequency/bandwidth, so bandwidth = frequency/q
         float bw = freq / q;
+        bw = std::min<float>(bw, 0.49f * sampleRate()); // bw < nyquist
 
         // normalize freq and bandwidth
         float wc = 2 * M_PI * freq / sampleRate();
         float wBW = 2 * M_PI * bw / sampleRate();
 
         // compute pole radius and angle
-        float radius = 1 - (wBW / 2);
+        float radius = 1.0f - (wBW * 0.5f);
+        radius = std::max(0.01f, radius); // keep it above 0
         float theta = wc; // seems redundant, leaving in for now
 
         // calculate a1 and a2
@@ -130,13 +133,31 @@ void JWPhaser::next(int nSamples) {
         float sum = (input[i] * (1.0f - mix)) + (allpassed * mix);
         output[i] = zapgremlins(sum);
 
-        // add nonlinearity to fb path
+        // write signal to buffer, then update writePhase.  add nonlinearity to fb path
 
+        int nonlinearMode = static_cast<int>(std::round(nonlin));
+        nonlinearMode = std::clamp(nonlinearMode, 0, 3);
 
-        // write signal to buffer, then update writePhase
-        if (nonlin = 0) {feedbackBuffer[writePhase] = cubic.process(allpassed, gain, feedback);};
-        if (nonlin = 1) {feedbackBuffer[writePhase] = tanh.process(allpassed, gain, feedback);};
-        if (nonlin = 2) {feedbackBuffer[writePhase] = fold.process(allpassed, gain, feedback);};
+        switch (nonlinearMode) {
+            case 0:
+                feedbackBuffer[writePhase] = allpassed * feedback;
+                break;
+            case 1:
+                feedbackBuffer[writePhase] = cubic.process(allpassed, gain, feedback);
+                break;
+
+            case 2:
+                feedbackBuffer[writePhase] = tanh.process(allpassed, gain, feedback);
+                break;
+
+            case 3:
+                feedbackBuffer[writePhase] = fold.process(allpassed, gain, feedback);
+                break;
+            default:
+                feedbackBuffer[writePhase] = allpassed * feedback; // shouldn't happen tbh
+                break;
+        }
+
         writePhase = (writePhase + 1) & mask;
 
     }

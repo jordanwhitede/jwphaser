@@ -9,20 +9,24 @@ a simple 4 stage phaser with feedback
 
 
 classmethods::
-
+input=0, freq=1000, q=1, mix=0.5, nonlin=0, gain=1, feedback=0.5, numStages=8
 method::ar, kr
 
 argument::input
 
-argument::rate - the modulation frequency
+argument::frequency - bring your own LFO and frequency range
 
-argument::depth - mod depth, max 1
+argument::q - the q of the allpass filters
 
 argument::mix - the mix between the signals
 
-argument::feedback - the feedback amount
+argument::nonlin - the nonlinearity in the feedback path. 0 for none, 1 for cubic distortion, 2 for tanh, 3 for wavefolding similar to Fold.ar
 
-argument::numStages - experimental, can be modulated but the results aren't great yet
+argument::gain - the amount of gain driving the nonlinearity in the feedback path
+
+argument::feedback - the post nonlinearity gain
+
+argument::numStages - from 2 to 8, for best results, avoid modulating
 
 
 
